@@ -43,9 +43,10 @@ class User extends Controller
      */
     public function create( Request $request )
     {
+
         // Automatically decode json input, depending on the content-type
-        $username = $request->input('username');
-        $password = $request->input('password');
+        $username = strtolower($request->input('username'));
+        $password = strtolower($request->input('password'));
 
         if (empty( $username ) ) {
             return response()
@@ -138,7 +139,7 @@ class User extends Controller
         $password = $request->input('password');
 
         $user = NULL;
-        if ($email) {
+        if ($username) {
             $user = \App\User::where('username', $username)
                 ->where('password', $password)
                 ->first();

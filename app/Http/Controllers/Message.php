@@ -22,8 +22,9 @@ class Message extends Controller
      */
     public function get_all( $username )
     {
-        //$db_messages = DB::table('messages')->get();
-        $db_messages = \App\Message::where('from', $username)->orWhere('to', $username)->first();
+        $lowercaseUsername = strtolower($username);
+        $db_messages = DB::table('messages')->where('from', $lowercaseUsername)->orWhere('to', $lowercaseUsername)->get();
+        //$db_messages = \App\Message::where('from', $username)->orWhere('to', $username)->first();
         
         // Only returns some fields
         $messages = [];
@@ -47,8 +48,8 @@ class Message extends Controller
     public function create( Request $request )
     {
         // Automatically decode json input, depending on the content-type
-        $to = $request->input('to');
-        $from = $request->input('from');
+        $to = strtolower($request->input('to'));
+        $from = strtolower($request->input('from'));
         $text = $request->input('text');
 
         if (empty( $to ) ) {
@@ -72,7 +73,7 @@ class Message extends Controller
         
         $message_id = null;
         try {
-            $message_id = DB::table('message')->insertGetId(
+            $message_id = DB::table('messages')->insertGetId(
                     $message_to_insert
                 );
             } catch (\Illuminate\Database\QuerusernameusernameusernameyException $e) {

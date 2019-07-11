@@ -4,9 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMessageTable extends Migration
+class CreateMessages extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -24,8 +23,12 @@ class CreateMessageTable extends Migration
 
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('phone');
+        });
+
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('email');
         });
+        
     }
 
     /**
@@ -44,7 +47,5 @@ class CreateMessageTable extends Migration
         Schema::table('users', function ($table) {
             $table->string('phone')->unique()->nullable();
         });
-
     }
-    
 }
