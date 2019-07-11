@@ -29,8 +29,6 @@ class User extends Controller
         foreach ($db_users as $user) {
             $users[] = [
                 'id' => $user->id,
-                'email' => $user->email,
-                'phone' => $user->phone,
                 'username' => $user->username
             ];
         }
@@ -48,8 +46,6 @@ class User extends Controller
         // Automatically decode json input, depending on the content-type
         $username = $request->input('username');
         $password = $request->input('password');
-        $email    = $request->input('email');
-        $phone    = $request->input('phone');
 
         if (empty( $username ) ) {
             return response()
@@ -59,25 +55,19 @@ class User extends Controller
             return response()
                 ->json( ["status" => "error", 'error' => '"password" field is empty'], 500 );
         };
-        if (empty( $email ) && empty( $phone ) ) {
-            return response()
-                ->json( ["status" => "error", 'error' => '"email" and "phone" fields are empty'], 500);
-        };
   
         // Check for user existence in database
-        $user = \App\User::where('email', $email)->orWhere('phone', $phone)->first();
+        $user = \App\User::where('username', $username)->first();
         if ($user) {
             return response()
                 ->json([
                     'status' => 'error',
-                    'error' => 'email or phone field already exists'
+                    'error' => 'username field already exists'
                 ]);
         }
         $user_to_insert = [
             'username' => $username,
             'password' => $password,
-            'email' => $email,
-            'phone' => $phone,
         ];
         
         $user_id = null;
@@ -139,36 +129,21 @@ class User extends Controller
             $user->password = $request->input('password');
         }
 
-        if ($request->input('phone') ) {
-            Log::debug("Updating ".$request->input('phone'));
-            $user->phone = $request->input('phone');
-        }
-
-        if ($request->input('email') ) {
-            Log::debug("Updating ".$request->input('email'));
-            $user->email = $request->input('email');
-        }
-
         $user->save();
         return ["status" => "ok", "message" => "Updated user $id"];
     }
 
     public function login(Request $request) {
-        $email = $request->input('email');
-        $phone = $request->input('phone');
+        $username = $request->input('username');
         $password = $request->input('password');
 
         $user = NULL;
         if ($email) {
-            $user = \App\User::where('email', $email)
-                ->where('password', $password)
-                ->first();
-        } elseif( $phone ) {
-            $user = \App\User::where('phone', $phone)
+            $user = \App\User::where('username', $username)
                 ->where('password', $password)
                 ->first();
         } else {
-            return ["status" => "error", 'error' => 'Please specify an email or phone'];
+            return ["status" => "error", 'error' => 'Please specify an username.'];
         }
         
         if ($user) {
@@ -187,8 +162,7 @@ class User extends Controller
             // Return some user informations, and the token
             $result = [
                 "id" => $user->id,
-                "email" => $user->email,
-                "phone" => $user->phone,
+                "username" => $user->username,
                 "api_token" => $token_value
             ];
         } else {
@@ -201,7 +175,6 @@ class User extends Controller
     public function deleteUser( $id, Request $request ) {
         $user = \App\User::where('id', $id)->first();
 
-
         // Check if the logged in user is the same as the one we want to modify
         if ($request->header('api_token') !== $user->api_token) {
             return response()
@@ -211,12 +184,12 @@ class User extends Controller
                 ]);
         }
 
-        // TODO: check if logged in user is the same as $email
+        // TODO: check if logged in user is the same as $username
         if ($user) {
             $user->delete();
-            return ["status" => "ok", 'message' => "User $email deleted"];
+            return ["status" => "ok", 'message' => "User $username deleted"];
         } else {
-            return ["status" => "error", 'error' => "Cannot delete user $email"];
+            return ["status" => "error", 'error' => "Cannot delete user $username"];
         }
     }
 }

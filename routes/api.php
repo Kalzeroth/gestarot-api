@@ -14,6 +14,12 @@ use App\Http\Middleware\ApiAuthenticate;
 |
 */
 
+Route::post('/message/create', 'Message@create');
+
+Route::get('/message/{username}', 'Message@get_all');
+
+
+
 Route::post('/user/login', 'User@login');
 
 Route::get('/user', 'User@get_all');
