@@ -10,12 +10,6 @@ use \Str;
 
 class Message extends Controller
 {
-    /**
-     * Returns a message.
-     */
-    public function get( $id ) {
-        // return ['username' => 'hello'];
-    }
 
     /**
      * Return all message stored in database with said username in from or to.
@@ -24,7 +18,6 @@ class Message extends Controller
     {
         $lowercaseUsername = strtolower($username);
         $db_messages = DB::table('messages')->where('from', $lowercaseUsername)->orWhere('to', $lowercaseUsername)->get();
-        //$db_messages = \App\Message::where('from', $username)->orWhere('to', $username)->first();
         
         // Only returns some fields
         $messages = [];
@@ -66,8 +59,8 @@ class Message extends Controller
         };
   
         $message_to_insert = [
-            'to' => $to,
             'from' => $from,
+            'to' => $to,
             'text' => $text
         ];
         

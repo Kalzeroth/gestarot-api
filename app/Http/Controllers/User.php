@@ -10,12 +10,6 @@ use \Str;
 
 class User extends Controller
 {
-    /**
-     * Returns a user.
-     */
-    public function get( $id ) {
-        // return ['username' => 'hello'];
-    }
 
     /**
      * Return all users stored in database.
@@ -46,7 +40,7 @@ class User extends Controller
 
         // Automatically decode json input, depending on the content-type
         $username = strtolower($request->input('username'));
-        $password = strtolower($request->input('password'));
+        $password = $request->input('password');
 
         if (empty( $username ) ) {
             return response()
@@ -135,7 +129,7 @@ class User extends Controller
     }
 
     public function login(Request $request) {
-        $username = $request->input('username');
+        $username = strtolower($request->input('username'));
         $password = $request->input('password');
 
         $user = NULL;
